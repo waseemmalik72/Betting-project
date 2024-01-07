@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Betting Project</title>
+    <link rel="stylesheet" href="./assets/style.css">
+</head>
+
+<body>
+    <header class="batting-header">
+        <nav class="batting-nav">
+            <ul class="batting-details">
+                <li class="batting-detail">Home</li>
+                <li class="batting-detail">About</li>
+                <li class="batting-detail">Contact</li>
+                <li class="batting-detail">Services</li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <button id="sports">Click Me</button>
+    </main>
+    <div id="big-bash-league-container"></div>
+    <h1 class="league-heading">Big Bash League</h1>
+    <!-- <div class="event-id-">
+        <h1 class="sport-title"></h1>
+        <div class="home-team"></div>
+        <div class="away-team"></div>
+        <div class="commence-time"></div>
+        <div class="bookmakers">
+            <div class="back-div">
+                <div class="h2h-team-name"></div>
+                <div class="h2h-team-price"></div>
+            </div>
+            <div class="lay-div">
+                <div class="h2h-lay-team-name"></div>
+                <div class="h2h-lay-team-price"></div>
+            </div>
+        </div>
+    </div> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <!-- <script src="./assets/app.mjs"></script> -->
+    <script>
+
+
+        let sportHandler = document.getElementById("sports");
+
+        sportHandler.addEventListener("click", async () => {
+            console.log("hello world")
+            let sportData = ``;
+            try {
+                const sportResponse = await axios.get("/api/v1/sports");
+
+                sportResponse.data.map(detail => {
+
+                    sportData += `<div class="event-id-${detail.id}">
+                                    <div class="home-team">${detail.home_team}</div>
+                                    <div class="away-team">${detail.away_team}</div>
+                                    <div class="commence-time">${detail.commence_time}</div>
+                                </div> </br> </br> </br>`;
+
+                    detail.bookmakers.map(markets => {
+                        markets.markets.map(outcomes => {
+                            outcomes.outcomes.map(betting => {
+                                console.log(betting);
+                                let gameName = betting.name;
+                                let priceDetail = betting.price;
+                                sportData += ` <div class="bookmakers">
+                                                        <div class="back-div">
+                                                            <div class="h2h-back-team-name">${gameName}</div>
+                                                            <div class="h2h-back-team-price">${priceDetail}
+                                                        </div>                                                            
+                                                        </div>
+                                                        <div class="lay-div">
+                                                            <div class="h2h-lay-team-name">${gameName}</div>
+                                                            <div class="h2h-lay-team-price">${priceDetail}</div>
+                                                        </div>
+                                                    </div>`
+                            })
+                        })
+                    })
+
+                });
+
+                document.getElementById("big-bash-league-container").insertAdjacentHTML("beforeend", sportData);
+                console.log(sportResponse.data);
+            } catch (err) {
+                console.log(err);
+            }
+
+        })
+
+    </script>
+</body>
+
+</html>
